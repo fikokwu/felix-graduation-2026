@@ -181,6 +181,26 @@
       margin-bottom: 10px;
       letter-spacing: 1px;
     }
+    .rsvp-form { margin-top: 20px; }
+    .rsvp-form label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 4px; }
+    .rsvp-form input, .rsvp-form select {
+      width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px;
+      font-size: 0.95rem; margin-bottom: 14px; box-sizing: border-box; color: #222;
+      font-family: inherit; transition: border-color 0.2s;
+    }
+    .rsvp-form input:focus, .rsvp-form select:focus { outline: none; border-color: #4a7c59; }
+    .rsvp-btn {
+      width: 100%; padding: 12px; background: #4a7c59; color: #fff;
+      border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s; font-family: inherit;
+    }
+    .rsvp-btn:hover { background: #3a6347; }
+    .rsvp-btn:disabled { background: #aaa; cursor: default; }
+    .rsvp-success {
+      text-align: center; padding: 18px; background: #edf7f0;
+      border-radius: 10px; border: 1.5px solid #4a7c59; display: none;
+    }
+    .rsvp-success p { color: #2d5c3a; font-weight: 600; margin: 0; }
 
     /* CLOSING */
     .closing {
@@ -299,6 +319,35 @@
         <p>The celebration doesn't stop at the ceremony! Join us for a Grad BBQ on May 30th — full details on time and location will be shared here very soon. Don't miss it! 🎉</p>
       </div>
 
+      <!-- RSVP FORM -->
+      <div class="rsvp-form" id="rsvp-section">
+        <div style="border-top: 1px solid #eee; margin: 18px 0;"></div>
+        <h3 style="font-size:1rem; color:#1a3a5c; margin:0 0 14px;">RSVP for the BBQ</h3>
+
+        <form id="rsvp-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <label for="rsvp-name">Your Name</label>
+          <input type="text" id="rsvp-name" name="name" placeholder="e.g. Auntie Ngozi" required>
+
+          <label for="rsvp-email">Email Address</label>
+          <input type="email" id="rsvp-email" name="email" placeholder="you@example.com" required>
+
+          <label for="rsvp-guests">Number of guests (including yourself)</label>
+          <select id="rsvp-guests" name="guests">
+            <option value="1">Just me</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5+">5 or more</option>
+          </select>
+
+          <button type="submit" class="rsvp-btn" id="rsvp-btn">Count me in! 🍖</button>
+        </form>
+
+        <div class="rsvp-success" id="rsvp-success">
+          <p>You're on the list! We'll be in touch closer to May 30th. See you there! 🎉</p>
+        </div>
+      </div>
+
     </div>
 
     <!-- CLOSING -->
@@ -313,5 +362,35 @@
 
   </div>
 
+<script>
+  const form = document.getElementById('rsvp-form');
+  const btn = document.getElementById('rsvp-btn');
+  const success = document.getElementById('rsvp-success');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        success.style.display = 'block';
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Count me in! 🍖';
+        alert('Something went wrong — please try again.');
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Count me in! 🍖';
+      alert('Something went wrong — please try again.');
+    }
+  });
+</script>
 </body>
 </html>
